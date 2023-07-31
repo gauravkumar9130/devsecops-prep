@@ -15,7 +15,7 @@ pipeline {
       }
       stage('Docker Build and Push') {
         steps {
-          withDockerRegistry([credentialsId: "dockerhub", URL: ""]) {
+          withDockerRegistry([credentialsId: "dockerhub", url: ""]) {
             sh 'docker built -t gauravkumar9130/numeric-app:""$GIT_TAG"" .'
             sh 'docker push gauravkumar9130/numeric-app:""$GIT_TAG""'
       }
