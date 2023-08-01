@@ -12,21 +12,10 @@ pipeline {
         steps {
           sh "mvn test"
         }
-      }
-      stage('Docker Build and Push') {
-        steps {
-          withDockerRegistry([credentialsId: "dockerhub", url: ""]) {
-            sh 'docker build -t gauravkumar9130/numeric-app:""$GIT_COMMIT"" .'
-            sh 'docker push gauravkumar9130/numeric-app:""$GIT_COMMIT""'
-      }
-    }
-}
-    stage('Kubernetes Deployment - Dev') {
-      steps {
-        withKubeConfig([credentialsId: 'kubeconfig']) {
-          sh "sed -i 's#replace#gauravkumar9130/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
-          sh "kubectl apply -f k8s_deployment_service.yaml"
-      }
+        post {
+          always {
+            junit 'target/surefire-reports/*.xml'
+            jacoco execPattern: 'target/jacoco.exec'
   }
     }
   }
